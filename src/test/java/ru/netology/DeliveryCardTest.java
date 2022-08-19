@@ -109,7 +109,7 @@ public class DeliveryCardTest {
     }
 
     @Test
-    void NegativeTest3NotClickAgreement() {
+    void NegativeTest3EmptyClickAgreement() {
         String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=city] input").setValue("Казань");
         $("[data-test-id=date] input").doubleClick().sendKeys(date);
@@ -133,6 +133,45 @@ public class DeliveryCardTest {
         String expected = "Поле обязательно для заполнения";
         String actual = $("[data-test-id='city'].input_invalid").getText().trim();
         assertEquals(expected, actual);
+    }
+    @Test
+    void NegativeTest5NumberInName() {
+        String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        $("[data-test-id=city] input").setValue("Казань");
+        $("[data-test-id=date] input").doubleClick().sendKeys(date);
+        $("[data-test-id=name] input").setValue("Пролор 123");
+        $("[data-test-id=phone] input").setValue("+79031234567");
+        $("[data-test-id=agreement]").click();
+        $(By.className("button")).click();
+
+        String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
+        String actual = $("[data-test-id='name'].input_invalid .input__sub").getText().trim();
+        assertEquals(expected, actual);
+    }
+    @Test
+    void NegativeTest6EmptyName() {
+        String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        $("[data-test-id=city] input").setValue("Казань");
+        $("[data-test-id=date] input").doubleClick().sendKeys(date);
+        $("[data-test-id=phone] input").setValue("+74564564545");
+        $(By.className("button")).click();
+
+        $x("//*[contains(text(),'обязательно')]").shouldBe(visible);
+    }
+    @Test
+    void NegativeTest7EmptyPhone() {
+        String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        $("[data-test-id=city] input").setValue("Казань");
+        $("[data-test-id=date] input").doubleClick().sendKeys(date);
+        $("[data-test-id=name] input").setValue("Иванов иван");
+        $(By.className("button")).click();
+
+        $x("//*[contains(text(),'обязательно')]").shouldBe(visible);
+    }
+    @Test
+    void NegativeTest8EmptyForm() {
+        $(By.className("button")).click();
+        $x("//*[contains(text(),'обязательно')]").shouldBe(visible);
     }
 
 
