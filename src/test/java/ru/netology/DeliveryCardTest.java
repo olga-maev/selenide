@@ -1,5 +1,6 @@
 package ru.netology;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,66 +21,81 @@ public class DeliveryCardTest {
     public void setForm() {
         Configuration.headless = true;
         open("http://localhost:9999/");
-        SelenideElement form = $("form");
+
     }
 
     @Test
-    void PositiveTest1AllValidValue() throws InterruptedException {
-        open("http://localhost:9999");
+    void shouldAllValidValue()  {
+
         $("[data-test-id=city] input").setValue("ка");
         $$("menu-item__control").filter(exactText("Казань")).forEach(SelenideElement::click);
-        String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        $("[data-test-id=date] input").doubleClick().sendKeys(date);
+        String planningDate = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        $("[data-test-id=date] input").doubleClick().sendKeys(planningDate);
         $("[data-test-id=name] input").setValue("Иванов Иван");
         $("[data-test-id=phone] input").setValue("+79031234567");
         $("[data-test-id = agreement]").click();
         $(By.className("button")).click();
-        $("[data-test-id=notification").shouldBe(visible, Duration.ofSeconds(15));
 
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+        $("[data-test-id=notification").shouldBe(visible, Duration.ofSeconds(15));
 
     }
 
     @Test
-    void PositiveTest2SetCityUser() {
-        String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    void shouldSetCityUser() {
+        String planningDate = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=city] input").setValue("Казань");
-        $("[data-test-id=date] input").doubleClick().sendKeys(date);
+        $("[data-test-id=date] input").doubleClick().sendKeys(planningDate);
         $("[data-test-id=name] input").setValue("Иван Иванов");
         $("[data-test-id=phone] input").setValue("+79031234567");
         $("[data-test-id=agreement]").click();
         $(By.className("button")).click();
 
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+
         $("[data-test-id=notification").shouldBe(visible, Duration.ofSeconds(17));
     }
 
     @Test
-    void PositiveTest3DoubleNameUser() {
-        String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    void shouldDoubleNameUser() {
+        String planningDate = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=city] input").setValue("Казань");
-        $("[data-test-id=date] input").doubleClick().sendKeys(date);
+        $("[data-test-id=date] input").doubleClick().sendKeys(planningDate);
         $("[data-test-id=name] input").setValue("Иванов-Сидоров Иван");
         $("[data-test-id=phone] input").setValue("+79031234567");
         $("[data-test-id=agreement]").click();
         $(By.className("button")).click();
 
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+
         $("[data-test-id=notification").shouldBe(visible, Duration.ofSeconds(17));
     }
 
     @Test
-    void PositiveTest4Add10Days() {
-        String date = LocalDate.now().plusDays(10).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    void shouldAdd10Days() {
+        String planningDate = LocalDate.now().plusDays(10).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=city] input").setValue("Казань");
-        $("[data-test-id=date] input").doubleClick().sendKeys(date);
+        $("[data-test-id=date] input").doubleClick().sendKeys(planningDate);
         $("[data-test-id=name] input").setValue("Иван Иванов");
         $("[data-test-id=phone] input").setValue("+79031234567");
         $("[data-test-id=agreement]").click();
         $(By.className("button")).click();
 
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+
         $("[data-test-id=notification").shouldBe(visible, Duration.ofSeconds(17));
     }
 
-    @Test
-    void NegativeTest1EnglishName() {
+        @Test
+    void shouldEnglishName() {
         String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=city] input").setValue("Казань");
         $("[data-test-id=date] input").doubleClick().sendKeys(date);
@@ -94,7 +110,7 @@ public class DeliveryCardTest {
     }
 
     @Test
-    void NegativeTest2ErrorPhone() {
+    void shouldErrorPhone() {
         String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=city] input").setValue("Казань");
         $("[data-test-id=date] input").doubleClick().sendKeys(date);
@@ -109,7 +125,7 @@ public class DeliveryCardTest {
     }
 
     @Test
-    void NegativeTest3EmptyClickAgreement() {
+    void shouldEmptyClickAgreement() {
         String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=city] input").setValue("Казань");
         $("[data-test-id=date] input").doubleClick().sendKeys(date);
@@ -123,7 +139,7 @@ public class DeliveryCardTest {
     }
 
     @Test
-    void NegativeTest4EmptyCity() {
+    void shouldEmptyCity() {
         String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=date] input").doubleClick().sendKeys(date);
         $("[data-test-id=name] input").setValue("Иванов иван");
@@ -135,7 +151,7 @@ public class DeliveryCardTest {
         assertEquals(expected, actual);
     }
     @Test
-    void NegativeTest5NumberInName() {
+    void shouldNumberInName() {
         String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=city] input").setValue("Казань");
         $("[data-test-id=date] input").doubleClick().sendKeys(date);
@@ -149,7 +165,7 @@ public class DeliveryCardTest {
         assertEquals(expected, actual);
     }
     @Test
-    void NegativeTest6EmptyName() {
+    void shouldEmptyName() {
         String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=city] input").setValue("Казань");
         $("[data-test-id=date] input").doubleClick().sendKeys(date);
@@ -159,7 +175,7 @@ public class DeliveryCardTest {
         $x("//*[contains(text(),'обязательно')]").shouldBe(visible);
     }
     @Test
-    void NegativeTest7EmptyPhone() {
+    void shouldEmptyPhone() {
         String date = LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=city] input").setValue("Казань");
         $("[data-test-id=date] input").doubleClick().sendKeys(date);
@@ -169,7 +185,7 @@ public class DeliveryCardTest {
         $x("//*[contains(text(),'обязательно')]").shouldBe(visible);
     }
     @Test
-    void NegativeTest8EmptyForm() {
+    void shouldEmptyForm() {
         $(By.className("button")).click();
         $x("//*[contains(text(),'обязательно')]").shouldBe(visible);
     }
