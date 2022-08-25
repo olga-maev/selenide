@@ -2,6 +2,7 @@ package ru.netology;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DeliveryCardTest {
     @BeforeEach
     public void setForm() {
-        Configuration.headless = true;
+//        Configuration.headless = true;
         open("http://localhost:9999/");
 
     }
@@ -189,6 +190,36 @@ public class DeliveryCardTest {
         $(By.className("button")).click();
         $x("//*[contains(text(),'обязательно')]").shouldBe(visible);
     }
+    @Test
+    void shouldCityListAndOpenCalendar() {
+        String myCity = "Абакан";
+        $("[data-test-id=city] input").setValue("ка");
+        $$(".menu-item__control").filter(exactText(myCity)).forEach(SelenideElement::click);
+        $(".icon").click();
+        if (ru.netology.delivery.data.DataGenerator.generateDate(7, "M").equals(ru.netology.delivery.data.DataGenerator.generateDate(0, "M"))) {
+            ElementsCollection dates = $$(".calendar__day");
+            for (SelenideElement element : dates) {
+                if (element.getText().equals(ru.netology.delivery.data.DataGenerator.generateDate(7, "d"))) {
+                    element.click();
+                }
+            }
+        } else {
+            $(By.cssSelector("[data-step=\"1\"]")).click();
+            ElementsCollection dates = $$(".calendar__day");
+            for (SelenideElement element : dates) {
+                if (element.getText().equals(ru.netology.delivery.data.DataGenerator.generateDate(7, "d"))) {
+                    element.click();
+                }
+            }
+        }
+        $("[data-test-id=name] input").setValue("Иван Иванов");
+        $("[data-test-id=phone] input").setValue("+79031234567");
+        $("[data-test-id=agreement]").click();
+        $(By.className("button")).click();
 
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + ru.netology.delivery.data.DataGenerator.generateDate(7, "dd.MM.yyyy")), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+    }
 
 }
