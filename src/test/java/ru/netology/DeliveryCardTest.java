@@ -12,8 +12,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static com.codeborne.selenide.Condition.exactText;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -38,7 +37,7 @@ public class DeliveryCardTest {
         $(By.className("button")).click();
 
         $(".notification__content")
-                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldHave(text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
         $("[data-test-id=notification").shouldBe(visible, Duration.ofSeconds(15));
 
@@ -55,7 +54,7 @@ public class DeliveryCardTest {
         $(By.className("button")).click();
 
         $(".notification__content")
-                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldHave(text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
 
         $("[data-test-id=notification").shouldBe(visible, Duration.ofSeconds(17));
@@ -72,7 +71,7 @@ public class DeliveryCardTest {
         $(By.className("button")).click();
 
         $(".notification__content")
-                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldHave(text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
 
         $("[data-test-id=notification").shouldBe(visible, Duration.ofSeconds(17));
@@ -89,7 +88,7 @@ public class DeliveryCardTest {
         $(By.className("button")).click();
 
         $(".notification__content")
-                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldHave(text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
 
         $("[data-test-id=notification").shouldBe(visible, Duration.ofSeconds(17));
@@ -190,28 +189,48 @@ public class DeliveryCardTest {
         $(By.className("button")).click();
         $x("//*[contains(text(),'обязательно')]").shouldBe(visible);
     }
+//    @Test
+//    void shouldCityListAndOpenCalendar() {
+//        String myCity = "Абакан";
+//        $("[data-test-id=city] input").setValue("ка");
+//        $$(".menu-item__control").filter(exactText(myCity)).forEach(SelenideElement::click);
+//        $(".icon").click();
+//        if (ru.netology.delivery.data.DataGenerator.generateDate(7, "M").equals(ru.netology.delivery.data.DataGenerator.generateDate(0, "M"))) {
+//            ElementsCollection dates = $$(".calendar__day");
+//            for (SelenideElement element : dates) {
+//                if (element.getText().equals(ru.netology.delivery.data.DataGenerator.generateDate(7, "d"))) {
+//                    element.click();
+//                }
+//            }
+//        } else {
+//            $(By.cssSelector("[data-step=\"1\"]")).click();
+//            ElementsCollection dates = $$(".calendar__day");
+//            for (SelenideElement element : dates) {
+//                if (element.getText().equals(ru.netology.delivery.data.DataGenerator.generateDate(7, "d"))) {
+//                    element.click();
+//                }
+//            }
+//        }
+//        $("[data-test-id=name] input").setValue("Иван Иванов");
+//        $("[data-test-id=phone] input").setValue("+79031234567");
+//        $("[data-test-id=agreement]").click();
+//        $(By.className("button")).click();
+//
+//        $(".notification__content")
+//                .shouldHave(Condition.text("Встреча успешно забронирована на " + ru.netology.delivery.data.DataGenerator.generateDate(7, "dd.MM.yyyy")), Duration.ofSeconds(15))
+//                .shouldBe(Condition.visible);
+//    }
     @Test
     void shouldCityListAndOpenCalendar() {
         String myCity = "Абакан";
         $("[data-test-id=city] input").setValue("ка");
         $$(".menu-item__control").filter(exactText(myCity)).forEach(SelenideElement::click);
-        $(".icon").click();
-        if (ru.netology.delivery.data.DataGenerator.generateDate(7, "M").equals(ru.netology.delivery.data.DataGenerator.generateDate(0, "M"))) {
-            ElementsCollection dates = $$(".calendar__day");
-            for (SelenideElement element : dates) {
-                if (element.getText().equals(ru.netology.delivery.data.DataGenerator.generateDate(7, "d"))) {
-                    element.click();
-                }
-            }
-        } else {
-            $(By.cssSelector("[data-step=\"1\"]")).click();
-            ElementsCollection dates = $$(".calendar__day");
-            for (SelenideElement element : dates) {
-                if (element.getText().equals(ru.netology.delivery.data.DataGenerator.generateDate(7, "d"))) {
-                    element.click();
-                }
-            }
+        LocalDate selected = LocalDate.now().plusDays(3);
+        LocalDate required = LocalDate.now().plusDays(7);
+        if (selected.getMonthValue() != required.getMonthValue()) {
+            $("[data-step='1']").click();
         }
+        $$("tr td").findBy(text(String.valueOf(required.getDayOfMonth()))).click();
         $("[data-test-id=name] input").setValue("Иван Иванов");
         $("[data-test-id=phone] input").setValue("+79031234567");
         $("[data-test-id=agreement]").click();
@@ -220,6 +239,8 @@ public class DeliveryCardTest {
         $(".notification__content")
                 .shouldHave(Condition.text("Встреча успешно забронирована на " + ru.netology.delivery.data.DataGenerator.generateDate(7, "dd.MM.yyyy")), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
+        }
     }
 
-}
+
+
